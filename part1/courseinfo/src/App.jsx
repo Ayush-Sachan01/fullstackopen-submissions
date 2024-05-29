@@ -5,13 +5,12 @@ const Header = ({name}) => {
     </>
   )
 }
-
-const Part = ({part}) => {
+const Part = ({name,exercises}) => {
   
   return (
     <>
       <p>
-        {part.name} {part.exercises}
+        {name} {exercises}
       </p>
     </>
   )
@@ -21,9 +20,9 @@ const Content = ({parts}) => {
   
   return (
     <>
-      <Part part={parts[0]} />
-      <Part part={parts[1]} />
-      <Part part={parts[2]} />
+
+     {parts.map(part => <Part key={part.id} name={part.name} exercises={part.exercises} />)} 
+    
     </>
   )
 }
