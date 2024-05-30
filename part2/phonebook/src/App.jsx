@@ -11,10 +11,17 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault()
     console.log('button has been clicked', event.target)
+    const trimmed= newName.trim()
     const personObject = {
-      name: newName
+      name: trimmed
     }
-    setPersons(persons.concat(personObject))
+    if(persons.find(person=>person.name===trimmed)){
+      alert(`${trimmed} is already added to phonebook`)
+    }
+    else{
+      setPersons(persons.concat(personObject))
+    }
+   
     setNewName('')
   }
 
