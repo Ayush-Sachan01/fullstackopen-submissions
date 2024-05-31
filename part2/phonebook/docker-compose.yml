@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  react-app:
+    image: node:20.11.0
+    working_dir: /work
+    volumes:
+      - .:/work
+    ports:
+      - "5173:5173"
+    command: sh -c "yarn install && yarn run dev"
+
+  json-server:
+    image: node:20.11.0
+    working_dir: /work
+    volumes:
+      - .:/work
+    ports:
+      - "3001:3001"
+    command: sh -c "yarn run server"
+
