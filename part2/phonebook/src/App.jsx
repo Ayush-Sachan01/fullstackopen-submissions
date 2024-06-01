@@ -1,16 +1,24 @@
 import { useState,useEffect } from 'react'
 import personService from './services/persons'
 
-const Notification = ({ message }) => {
+
+const Notification = ({ message , messageType}) => {
   if (message === null) {
     return null
   }
-
+ else if(messageType==='success'){
   return (
     <div className='success'>
       {message}
     </div>
-  )
+  )}
+  else{
+    return (
+      <div className='unsuccess'>
+      {message}
+    </div>
+    )
+  }
 }
 
 const Filter = ({ text, value, onChange }) => {
@@ -60,6 +68,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [message, setMessage] = useState(null)
+  const [messageType, setMessageType]=useState('success')
 
 
     useEffect(() => {
@@ -106,8 +115,10 @@ const App = () => {
         console.log(returnedPersons)
         setPersons(persons.concat(returnedPersons))
         setMessage(`Added ${trimmedName}`)
-            setTimeout(()=>{
+       
+            setTimeout(()=>{  
               setMessage(null)
+            
             },5000)
       })    
     }
@@ -142,6 +153,15 @@ const App = () => {
       .then(deletedPersons=>{
         setPersons(persons.filter(person=>person.id!==deletedPerson.id))
       }) // Here actually there is no need of using deletedPerson.id, I could just use id(which is sent as parameter to handleDelete).
+      .catch(error=>{
+        setMessage(`${deletedPerson.name} has already been deleted `)
+        setMessageType('unsuccess')
+        setTimeout(()=>{
+          setMessage(null)
+          setMessageType('success')
+        },5000)
+        setPersons(persons.filter(person=>person.id!==deletedPerson.id))
+      })
     }
   }
     
@@ -150,7 +170,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification  message={message}/>
+      <Notification  message={message} messageType={messageType}/>
       <Filter value={filter} onChange={handleFilterChange} text='filter shown with' />
       <h2>add a new</h2>
       <PersonForm 
