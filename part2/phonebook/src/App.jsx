@@ -1,7 +1,17 @@
 import { useState,useEffect } from 'react'
 import personService from './services/persons'
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
 
+  return (
+    <div className='success'>
+      {message}
+    </div>
+  )
+}
 
 const Filter = ({ text, value, onChange }) => {
   return (
@@ -49,6 +59,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
+
 
     useEffect(() => {
     personService.getAll().then(initialPersons => {
@@ -65,9 +77,13 @@ const App = () => {
       name: trimmedName,
       number: newNumber
     }
+    
     if (persons.find(person => person.name === trimmedName && person.number === newNumber)) {
-      alert(`${trimmedName} is already added to phonebook`)
-    }else if(persons.find(person => person.name === trimmedName)){
+      setMessage(`${trimmedName} is already added to phonebook`)
+      setTimeout(()=>{
+        setMessage(null)
+      },5000)    }
+    else if(persons.find(person => person.name === trimmedName)){
         if(window.confirm(`${trimmedName} is already added to phonebook, replace the old number with a new one?`)){
          const person=persons.find(person=>person.name===trimmedName).id
          personService.update(person,personObject)
@@ -75,6 +91,10 @@ const App = () => {
             console.log(updatedPerson)
             setPersons(persons.map(person=>person.id!==updatedPerson.id?person:updatedPerson))
            // Here it is important to use person.id!==updatedPerson.id instead of person!==updatedPerson because person is an object and updatedPerson is also an object so they will never be equal. These two have different reference in memory so they will never be satifsying this: "==="
+           setMessage(`Updated ${trimmedName}'s number`)
+            setTimeout(()=>{
+              setMessage(null)
+            },5000)
           })
         }
     }
@@ -85,7 +105,10 @@ const App = () => {
       .then(returnedPersons=>{
         console.log(returnedPersons)
         setPersons(persons.concat(returnedPersons))
-      
+        setMessage(`Added ${trimmedName}`)
+            setTimeout(()=>{
+              setMessage(null)
+            },5000)
       })    
     }
  
@@ -127,6 +150,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification  message={message}/>
       <Filter value={filter} onChange={handleFilterChange} text='filter shown with' />
       <h2>add a new</h2>
       <PersonForm 
