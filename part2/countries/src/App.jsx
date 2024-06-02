@@ -1,11 +1,14 @@
 import { useState,useEffect } from 'react'
 import countryService from './services/countries'
 
-const CountryList= ({countries})=>
+const CountryList= ({countries,handleClick})=>
   {
     return(
       <div>
-        {countries.map(country => <p key={country.name.common}>{country.name.common}</p>)}
+        {countries.map(country => <p key={country.name.common}>{country.name.common} 
+        <button onClick={()=>handleClick(country)}>show</button>
+        </p>)}
+
       </div>
     )
   }
@@ -48,16 +51,22 @@ function App() {
     console.log(filteredCountries[0])
     setFilteredCountries(filteredCountries)
   }
+  
+  const handleClick=(country)=>{
+    console.log(country)
+    setFilteredCountries([country])
+  }
+
   const handleShow=()=>{
     if(value===''){
       return <p></p>
     }
     else if(filteredCountries.length<=10 && filteredCountries.length>1){
-      return <CountryList countries={filteredCountries} />
+      return <CountryList countries={filteredCountries} handleClick={handleClick} />
 
     }
     else if(filteredCountries.length===1){
-      return <CountryDetails country={filteredCountries[0]} />
+      return <CountryDetails country={filteredCountries[0] }  />
       // here filteredCountries[0] is an object while filteredCountries is and array containing this one object. If you look at the CountryDetails component, you will see that it expects an object as a prop. That's why we pass filteredCountries[0] to it.
     }
     else if(filteredCountries.length>10){
