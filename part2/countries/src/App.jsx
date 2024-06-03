@@ -1,5 +1,39 @@
 import { useState,useEffect } from 'react'
 import countryService from './services/countries'
+import axios from 'axios'
+
+
+const Weather = ({country})=>
+  {
+    const [weather, setWeather] = useState([])
+    const api_key = import.meta.env.VITE_WEATHER_KEY
+    const capital = country.capital
+    console.log('CAPITAL',capital)
+    console.log('API KEY',api_key)
+    const baseUrl= `https://api.openweathermap.org/data/2.5/weather?q=${capital[0]}&appid=${api_key}&units=metric`
+    console.log('BASE URL',baseUrl)
+    useEffect(() => {
+      axios
+        .get(baseUrl)
+        .then(response => {
+          setWeather(response.data)
+        })
+        .catch(error => console.error('Error fetching weather data:', error))
+    }, [])
+  if(weather.length===0){
+    return <p>Weather is being loaded</p>
+  }
+  // This above if statement is added because when the component is first rendered, the weather state is an empty array. So its structure is not as we expect it to be.
+    return(
+      <div>
+        <h2>Weather in {capital[0]}</h2>
+        temperature: {weather.main.temp} Celcius <br />
+        <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt="Not Found" /><br />
+        wind: {weather.wind.speed} m/s 
+      </div>
+    )
+   
+  }
 
 const CountryList= ({countries,handleClick})=>
   {
@@ -26,6 +60,7 @@ const CountryList= ({countries,handleClick})=>
            </ul>
           
           <img src={country.flags.png} alt={country.name.common} width="100"  />
+          <Weather country={country} />
       </div>
     )
   }
